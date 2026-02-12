@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Janning Group - Ergänzende Gefährdungsbeurteilung Baustelle" />
+  <meta name="theme-color" content="#e8610a" />
+  <title>Ergänzende Gefährdungsbeurteilung Baustelle</title>
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json" />
+  
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo-block">
+        <span class="logo-main">JANNING</span>
+        <span class="logo-sub">GROUP</span>
+      </div>
+      <div class="header-stripe"></div>
+      <div class="form-title-block">
+        <span class="form-title">Ergänzende Gefährdungsbeurteilung Baustelle</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- VORLAGEN-BUTTONS -->
+  <div class="template-buttons">
+    <div class="template-label">Schnellauswahl Tätigkeit:</div>
+    <button type="button" class="template-btn" data-template="rohrbau">Rohrbauarbeiten</button>
+    <button type="button" class="template-btn" data-template="tiefbau">Tiefbauarbeiten</button>
+    <button type="button" class="template-btn" data-template="bohrung">Horizontalbohrung</button>
+    <button type="button" class="template-btn" data-template="lager">Lagerarbeiten</button>
+    <button type="button" class="template-btn" data-template="fernwaerme">Fernwärmeleitungen</button>
+    <button type="button" class="template-btn" data-template="glasfaser">Glasfaser</button>
+  </div>
+
+  <main class="form-container">
+    <form id="mainForm" novalidate>
+
+      <!-- ========== BEREICH 1 ========== -->
+      <section class="form-section">
+        <div class="section-label">
+          <span class="section-num">01</span>
+          <span class="section-name">Allgemein</span>
+        </div>
+
+        <div class="fields-grid">
+
+          <!-- Datum -->
+          <div class="field-group full-width">
+            <label class="field-label required" for="datum">Datum &amp; Uhrzeit</label>
+            <input type="text" id="datum" name="datum" class="field-input" readonly />
+          </div>
+
+          <!-- E-Mail Adresse -->
+          <div class="field-group full-width">
+            <label class="field-label required" for="email">E-Mail-Adresse für Zustellung</label>
+            <input type="email" id="email" name="email" class="field-input" placeholder="beispiel@firma.de" required />
+          </div>
+
+          <!-- Name -->
+          <div class="field-group">
+            <label class="field-label required" for="nameAV">Name des Arbeitsverantwortlichen</label>
+            <input type="text" id="nameAV" name="nameAV" class="field-input" placeholder="Vor- und Nachname" required />
+          </div>
+
+          <!-- Firma -->
+          <div class="field-group">
+            <label class="field-label required">Firma</label>
+            <div class="checkbox-group">
+              <label class="check-item">
+                <input type="checkbox" name="firma" value="Janning Tiefbau" />
+                <span class="check-box"></span>
+                <span>Janning Tiefbau</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" name="firma" value="Janning Bohrtechnik" />
+                <span class="check-box"></span>
+                <span>Janning Bohrtechnik</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" name="firma" value="Janning Rohrbau" />
+                <span class="check-box"></span>
+                <span>Janning Rohrbau</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Baustelle -->
+          <div class="field-group full-width">
+            <label class="field-label required" for="baustelleAddr">Baustelle</label>
+            <div class="map-field-row">
+              <input type="text" id="baustelleAddr" name="baustelle" class="field-input" placeholder="Adresse der Baustelle" required readonly />
+              <button type="button" class="map-btn" id="openMapBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Standort wählen
+              </button>
+            </div>
+            <input type="hidden" id="baustelleLat" name="baustelleLat" />
+            <input type="hidden" id="baustelleLng" name="baustelleLng" />
+          </div>
+
+          <!-- Versorger -->
+          <div class="field-group">
+            <label class="field-label" for="versorger">Versorger</label>
+            <input type="text" id="versorger" name="versorger" class="field-input" placeholder="Name des Versorgers" />
+          </div>
+
+          <!-- SiGe -->
+          <div class="field-group">
+            <label class="field-label" for="sigeKoord">SiGe-Koordinator (gem. § 3 BauStellV)</label>
+            <input type="text" id="sigeKoord" name="sigeKoord" class="field-input" placeholder="Name / Kontakt" />
+          </div>
+
+          <!-- Mitarbeiter -->
+          <div class="field-group">
+            <label class="field-label required" for="mitarbeiter">Mitarbeiter (Anzahl)</label>
+            <input type="number" id="mitarbeiter" name="mitarbeiter" class="field-input" placeholder="z. B. 4" min="1" required />
+          </div>
+
+          <!-- Unterschrift Unterweisung -->
+          <div class="field-group">
+            <label class="field-label required">Unterschrift Unterweisung</label>
+            <div class="radio-group">
+              <label class="radio-item">
+                <input type="radio" name="unterschriftUnterweisung" value="Ja" required />
+                <span class="radio-btn"></span>
+                <span>Ja</span>
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="unterschriftUnterweisung" value="Nein" />
+                <span class="radio-btn"></span>
+                <span>Nein</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Auszuführende Arbeiten -->
+          <div class="field-group full-width">
+            <label class="field-label" for="ausfuehrendeArbeiten">Auszuführende Arbeiten</label>
+            <textarea id="ausfuehrendeArbeiten" name="ausfuehrendeArbeiten" class="field-textarea" rows="3" placeholder="Beschreibung der geplanten Arbeiten"></textarea>
+          </div>
+
+          <!-- Ersthelfer -->
+          <div class="field-group">
+            <label class="field-label required" for="ersthelfer">Ersthelfer</label>
+            <input type="text" id="ersthelfer" name="ersthelfer" class="field-input" placeholder="Name des Ersthelfers" required />
+          </div>
+
+          <!-- Nachunternehmer -->
+          <div class="field-group">
+            <label class="field-label required">Nachunternehmer</label>
+            <div class="radio-group">
+              <label class="radio-item">
+                <input type="radio" name="nachunternehmerJaNein" value="Ja" id="nachunternehmerJa" required />
+                <span class="radio-btn"></span>
+                <span>Ja</span>
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="nachunternehmerJaNein" value="Nein" />
+                <span class="radio-btn"></span>
+                <span>Nein</span>
+              </label>
+            </div>
+            <div id="nachunternehmerNameWrap" class="hidden mt-sm">
+              <input type="text" id="nachunternehmerName" name="nachunternehmerName" class="field-input" placeholder="Name des Nachunternehmers" />
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========== BEREICH 2 ========== -->
+      <section class="form-section">
+        <div class="section-label">
+          <span class="section-num">02</span>
+          <span class="section-name">Organisation</span>
+          <span class="section-badge">Pflichtfelder</span>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="check-table">
+            <thead>
+              <tr>
+                <th class="th-frage">Frage</th>
+                <th class="th-option">Ja</th>
+                <th class="th-option">Nein</th>
+                <th class="th-option">Nicht erf.</th>
+                <th class="th-bemerkung">Bemerkung / Maßnahme</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Sind die Mitarbeiter geeignet und für die Aufgabe eingewiesen?</td>
+                <td class="center"><input type="radio" name="org1" value="Ja" required /></td>
+                <td class="center"><input type="radio" name="org1" value="Nein" /></td>
+                <td class="center"><input type="radio" name="org1" value="Nicht erforderlich" /></td>
+                <td><input type="text" name="org1_bem" class="table-input" placeholder="Bemerkung …" /></td>
+              </tr>
+              <tr>
+                <td>Ist das Verhalten bei Unfall bekannt und Erste Hilfe sichergestellt?</td>
+                <td class="center"><input type="radio" name="org2" value="Ja" required /></td>
+                <td class="center"><input type="radio" name="org2" value="Nein" /></td>
+                <td class="center"><input type="radio" name="org2" value="Nicht erforderlich" /></td>
+                <td><input type="text" name="org2_bem" class="table-input" placeholder="Bemerkung …" /></td>
+              </tr>
+              <tr>
+                <td>Liegt eine Schachterlaubnis / Freigabe durch den Versorger vor?</td>
+                <td class="center"><input type="radio" name="org3" value="Ja" required /></td>
+                <td class="center"><input type="radio" name="org3" value="Nein" /></td>
+                <td class="center"><input type="radio" name="org3" value="Nicht erforderlich" /></td>
+                <td><input type="text" name="org3_bem" class="table-input" placeholder="Bemerkung …" /></td>
+              </tr>
+              <tr>
+                <td>Liegt eine verkehrsbehördliche Anordnung für die Straßenverkehrssicherung vor?</td>
+                <td class="center"><input type="radio" name="org4" value="Ja" required /></td>
+                <td class="center"><input type="radio" name="org4" value="Nein" /></td>
+                <td class="center"><input type="radio" name="org4" value="Nicht erforderlich" /></td>
+                <td><input type="text" name="org4_bem" class="table-input" placeholder="Bemerkung …" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========== BEREICH 3 ========== -->
+      <section class="form-section">
+        <div class="section-label">
+          <span class="section-num">03</span>
+          <span class="section-name">Sicheres Arbeiten</span>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="check-table">
+            <thead>
+              <tr>
+                <th class="th-frage">Frage / Prüfpunkt</th>
+                <th class="th-option">Nicht erf.</th>
+                <th class="th-bemerkung">Bemerkung / Maßnahme</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Row 1: Speisepunkte -->
+              <tr>
+                <td>
+                  <strong>Als geeignete Speisepunkte / Anschlusspunkte sind vorhanden:</strong>
+                  <div class="sub-checks">
+                    <label class="check-item-sm"><input type="checkbox" name="sa1_bsv" value="Baustromverteiler mit FI/RCD" /><span class="check-box-sm"></span> Baustromverteiler mit FI/RCD</label>
+                    <label class="check-item-sm"><input type="checkbox" name="sa1_esg" value="(Ersatz-)Stromerzeuger" /><span class="check-box-sm"></span> (Ersatz-)Stromerzeuger</label>
+                    <label class="check-item-sm"><input type="checkbox" name="sa1_tt" value="Trenntrafo" /><span class="check-box-sm"></span> Trenntrafo</label>
+                    <label class="check-item-sm"><input type="checkbox" name="sa1_ksv" value="Kleinst-/Schutzverteiler mit FI/RCD" /><span class="check-box-sm"></span> Kleinst-/Schutzverteiler mit FI/RCD</label>
+                    <label class="check-item-sm"><input type="checkbox" name="sa1_prcd" value="PRCD-S" /><span class="check-box-sm"></span> PRCD-S</label>
+                  </div>
+                </td>
+                <td class="center"><input type="checkbox" name="sa1_ne" value="Nicht erforderlich" /></td>
+                <td><input type="text" name="sa1_bem" class="table-input" placeholder="Bemerkung …" /></td>
+              </tr>
+              <!-- Row 2: Sichtprüfung -->
+              <tr>
+                <td>
+                  <label class="check-item-sm">
+                    <input type="checkbox" name="sa2" value="Sichtprüfung an Geräten und Ausrüstungen vor der Benutzung durchgeführt" />
+                    <span class="check-box-sm"></span>
+                    Sichtprüfung an Geräten und Ausrüstungen vor der Benutzung durchgeführt (z.&nbsp;B. Leitern, Elektrogeräte, Werkzeuge, Brenner, Gasschläuche)
+                  </label>
+                </td>
+                <td class="center"><input type="checkbox" name="sa2_ne" value="Nicht erforderlich" /></td>
+                <td><input type="text" name="sa2_bem" class="table-input" placeholder="Bemerkung …" /></td>
+              </tr>
+              <!-- Row 3: PSA -->
+              <tr>
+                <td>
+                  <label class="check-item-sm">
+                    <input type="checkbox" name="sa3" value="Geeignete PSA vorhanden und in Ordnung" />
+                    <span class="check-box-sm"></span>
+                    Geeignete Persönliche Schutzausrüstung vorhanden und in Ordnung
+                  </label>
+                  <div class="sub-label">Notwendig ist / sind:</div>
+                  <div class="sub-checks">
+                    <label class="check-item-sm"><input type="checkbox" name="sa3_sh" value="Schutzhelm" /><span class="check-box-sm"></span> Schutzhelm</label>
+                    <label class="check-item-sm"><input type="checkbox" name="sa3_ss" value="Sicherheitsschuhe" /><span class="check-box-sm"></span> Sicherheitsschuhe</label>
+                    <label class="check-item-sm"><input type="checkbox" name="sa3_wv" value="Warnweste" /><span class="check-box-sm"></span> Warnweste</label>
+                    <label class="check-item-sm"><input type="checkbox" name="sa3_gs" value="Gehörschutz" /><span class="check-box-sm"></span> Gehörschutz</label>
+                    <label class="check-item-sm"><input type="checkbox" name="sa3_sb" value="Schutzbrille" /><span class="check-box-sm"></span> Schutzbrille</label>
+                    <label class="check-item-sm"><input type="checkbox" name="sa3_ag" value="Auffanggurt mit Falldämpfer" /><span class="check-box-sm"></span> Auffanggurt mit Falldämpfer</label>
+                    <label class="check-item-sm psa-material">
+                      <input type="checkbox" name="sa3_hg" value="Schutzhandschuhe" /><span class="check-box-sm"></span> Schutzhandschuhe aus:
+                      <input type="text" name="sa3_hg_mat" class="inline-input" placeholder="Material" />
+                    </label>
+                    <label class="check-item-sm"><input type="checkbox" name="sa3_as" value="Atemschutz FFP2" /><span class="check-box-sm"></span> Atemschutz (Staubschutzmaske FFP2)</label>
+                    <label class="check-item-sm psa-material">
+                      <input type="checkbox" name="sa3_so" value="Sonstiges PSA" /><span class="check-box-sm"></span> Sonstiges:
+                      <input type="text" name="sa3_so_text" class="inline-input" placeholder="Angabe" />
+                    </label>
+                  </div>
+                </td>
+                <td class="center"><input type="checkbox" name="sa3_ne" value="Nicht erforderlich" /></td>
+                <td><input type="text" name="sa3_bem" class="table-input" placeholder="Bemerkung …" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========== BEREICH 4 ========== -->
+      <section class="form-section">
+        <div class="section-label">
+          <span class="section-num">04</span>
+          <span class="section-name">Gefährdungsbeurteilung</span>
+        </div>
+        <p class="section-hint">Nur Besonderheiten der Bau- / Montagestelle berücksichtigen</p>
+
+        <div class="table-wrapper">
+          <table class="check-table gefahr-table">
+            <thead>
+              <tr>
+                <th class="th-frage">Besteht Gefahr durch …?</th>
+                <th class="th-bemerkung">Maßnahme *</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <label class="check-item-sm">
+                    <input type="checkbox" name="gef1" value="Absturz oder fehlende Durchtrittsicherheit" />
+                    <span class="check-box-sm"></span>
+                    Absturz oder fehlende Durchtrittsicherheit am Arbeitsplatz oder auf dem Weg zum Arbeitsplatz
+                  </label>
+                </td>
+                <td><input type="text" name="gef1_mass" class="table-input" placeholder="Maßnahme …" /></td>
+              </tr>
+              <tr>
+                <td>
+                  <label class="check-item-sm">
+                    <input type="checkbox" name="gef2" value="Verschütten / Versinken / Ertrinken" />
+                    <span class="check-box-sm"></span>
+                    Verschütten / Versinken / Ertrinken
+                  </label>
+                </td>
+                <td><input type="text" name="gef2_mass" class="table-input" placeholder="Maßnahme …" /></td>
+              </tr>
+              <tr>
+                <td>
+                  <label class="check-item-sm">
+                    <input type="checkbox" name="gef3" value="Brand- / Explosion" />
+                    <span class="check-box-sm"></span>
+                    Brand- / Explosion
+                  </label>
+                </td>
+                <td><input type="text" name="gef3_mass" class="table-input" placeholder="Maßnahme …" /></td>
+              </tr>
+              <tr>
+                <td>
+                  <label class="check-item-sm">
+                    <input type="checkbox" name="gef4" value="Gefahrstoffe / Biostoffe" />
+                    <span class="check-box-sm"></span>
+                    Gefahrstoffe / Biostoffe
+                  </label>
+                </td>
+                <td><input type="text" name="gef4_mass" class="table-input" placeholder="Maßnahme …" /></td>
+              </tr>
+              <tr>
+                <td>
+                  <label class="check-item-sm">
+                    <input type="checkbox" name="gef5" value="Bewegte Maschinenteile oder andere Arbeitsmittel; automatisch anlaufende Anlagen" />
+                    <span class="check-box-sm"></span>
+                    Bewegte Maschinenteile oder andere Arbeitsmittel; automatisch anlaufende Anlagen
+                  </label>
+                </td>
+                <td><input type="text" name="gef5_mass" class="table-input" placeholder="Maßnahme …" /></td>
+              </tr>
+              <tr>
+                <td>
+                  <label class="check-item-sm">
+                    <input type="checkbox" name="gef6" value="Arbeiten in engen Räumen / Behältern" />
+                    <span class="check-box-sm"></span>
+                    Arbeiten in engen Räumen / Behältern
+                  </label>
+                </td>
+                <td><input type="text" name="gef6_mass" class="table-input" placeholder="Maßnahme …" /></td>
+              </tr>
+              <tr>
+                <td>
+                  <label class="check-item-sm">
+                    <input type="checkbox" name="gef7" value="Tätigkeiten Anderer (z.B. herabfallende Gegenstände, Strahlung)" />
+                    <span class="check-box-sm"></span>
+                    Tätigkeiten Anderer (z.&nbsp;B. herabfallende Gegenstände, Strahlung)
+                  </label>
+                </td>
+                <td><input type="text" name="gef7_mass" class="table-input" placeholder="Maßnahme …" /></td>
+              </tr>
+              <tr>
+                <td>
+                  <label class="check-item-sm">
+                    <input type="checkbox" name="gef8" value="Sonstige Faktoren (z.B. Hitze, Kälte)" />
+                    <span class="check-box-sm"></span>
+                    Sonstige Faktoren (z.&nbsp;B. Hitze, Kälte), die nicht in der allgemeinen betrieblichen Gefährdungsbeurteilung erfasst sind
+                  </label>
+                </td>
+                <td><input type="text" name="gef8_mass" class="table-input" placeholder="Maßnahme …" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="legal-notice">
+          <p><strong>* Bemerkung:</strong> Zu jeder Gefahr muss eine wirksame Maßnahme getroffen werden. Ggf. Rückseite benutzen.
+          Sofern sicheres Arbeiten nicht gewährleistet werden kann, Kontakt mit dem Vorgesetzten / Unternehmer aufnehmen!</p>
+          <p>Diese Gefährdungsbeurteilung ergänzt die betriebliche Gefährdungsbeurteilung. Sie wurde vor Beginn der Arbeiten erstellt, die Maßnahmen wurden umgesetzt und auf Wirksamkeit überprüft. Die Mitarbeiter sind unterwiesen.</p>
+        </div>
+      </section>
+
+      <!-- ========== SUBMIT ========== -->
+      <div class="submit-area">
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span class="submit-text">Formular absenden</span>
+          <svg class="submit-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+
+      <!-- ========== SUCCESS / ERROR ========== -->
+      <div id="formMessage" class="form-message hidden"></div>
+
+    </form>
+
+    <!-- ========== ERLÄUTERUNGEN ========== -->
+    <section class="explanation-section">
+      <h2 class="exp-title">Erläuterungen zur Ergänzenden Gefährdungsbeurteilung Bau- / Montagestelle</h2>
+
+      <div class="exp-block">
+        <h3>Allgemeine Hinweise</h3>
+        <p>Die Angaben im ersten Abschnitt („Firma" bis „Mitarbeiter") sollten möglichst im Betrieb ausgefüllt werden. Neben den Namen sollten auch die Telefonnummern der genannten Personen aufgeführt werden.</p>
+        <p>Die Abschnitte „Organisation", „Sicheres Arbeiten" und „Gefährdungsbeurteilung" müssen vor Ort, d.&nbsp;h. an der Bau- oder Montagestelle und vor Arbeitsbeginn vom Arbeitsverantwortlichen ausgefüllt werden. Diese Person ist für die Richtigkeit und Vollständigkeit der Angaben verantwortlich.</p>
+        <p>Grundsätzlich reichen stichwortartige Eintragungen aus, nähere Erläuterungen, insbesondere zu Schutzmaßnahmen, werden auf dieser Seite unten eingetragen.</p>
+      </div>
+
+      <div class="exp-block">
+        <h3>Zum Formularkopf (Felder „Firma" bis „Ersthelfer")</h3>
+        <p><strong>Bau- / Montagestelle:</strong> Anschrift sowie, soweit erforderlich, nähere Bezeichnung (Stockwerk, Halle, o.&nbsp;ä.)</p>
+        <p><strong>Datum:</strong> Es ist das Datum der auszuführenden Arbeiten einzutragen, ggf. mehrere Tage, soweit dies bei Beginn der Arbeiten abzuschätzen ist.</p>
+        <p><strong>Baustellenverantwortlicher:</strong> z.&nbsp;B. Bauherr, Auftraggeber, Bauleiter, Anlagenverantwortlicher oder Ansprechpartner des Fremdbetriebs.</p>
+        <p><strong>Arbeitsverantwortlicher (bauleitender Monteur):</strong> Diese Person leitet die Arbeiten vor Ort. Sie sollte in der Lage sein, die Fragen in den folgenden Abschnitten beantworten zu können.</p>
+        <p><strong>SiGe-Koordinator (gem. § 3 BauStellV):</strong> sofern vorhanden.</p>
+        <p><strong>Mitarbeiter:</strong> Hier sind alle Beschäftigten, die außer dem Arbeitsverantwortlichen an der Bau- / Montagestelle tätig sind, zu benennen, auch Praktikanten und Personen nach dem AÜG.</p>
+        <p><strong>Ersthelfer:</strong> Ab 2 Personen muss mindestens ein Ersthelfer vor Ort sein.</p>
+      </div>
+
+      <div class="exp-block">
+        <h3>Zu „Organisation"</h3>
+        <p>„Geeignet" umfasst alle körperlichen und geistigen Fähigkeiten einer Person, die für das sichere Arbeiten erforderlich sind. Bei Jugendlichen sind die Vorgaben des Jugendarbeitsschutzgesetzes zu beachten.</p>
+        <p>Zum Verhalten beim Unfall gehört z.&nbsp;B. der richtige Notruf und die Kenntnis, wer Ersthelfer ist.</p>
+      </div>
+
+      <div class="exp-block">
+        <h3>Zu „Sicheres Arbeiten"</h3>
+        <p>Welche PSA erforderlich ist, muss im Rahmen der allgemeinen betrieblichen Gefährdungsbeurteilung ermittelt werden. Vorrangig sind technische und organisatorische Maßnahmen zur Vermeidung bzw. Verringerung von Gefahren.</p>
+      </div>
+
+      <div class="exp-block">
+        <h3>Zu „Gefährdungsbeurteilung"</h3>
+        <p>Anzukreuzen sind alle Punkte, bei denen eine Unfall- oder Gesundheitsgefahr für die vor Ort tätigen Beschäftigten besteht. Für jede Gefahr muss eine Maßnahme umgesetzt, auf Wirksamkeit geprüft und eingetragen werden.</p>
+        <p>Weitere Maßnahmen bzw. Erläuterungen zu Seite 1 (evtl. spezielle Unterweisung der Mitarbeiter) sind gesondert zu dokumentieren.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- MAP MODAL -->
+  <div id="mapModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span>Baustelle auf Karte wählen</span>
+        <button type="button" class="modal-close" id="closeMapBtn">✕</button>
+      </div>
+      <div class="map-search-row">
+        <input type="text" id="mapSearchInput" class="field-input" placeholder="Adresse suchen …" />
+        <button type="button" class="map-search-btn" id="mapSearchBtn">Suchen</button>
+      </div>
+      <div id="leafletMap"></div>
+      <div class="modal-footer">
+        <span id="selectedAddrDisplay" class="selected-addr">Noch kein Standort gewählt</span>
+        <button type="button" class="submit-btn sm" id="confirmMapBtn">Übernehmen</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/gefaehrdungsbeurteilung/service-worker.js')
+          .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+          .catch(err => console.log('❌ Service Worker registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>
