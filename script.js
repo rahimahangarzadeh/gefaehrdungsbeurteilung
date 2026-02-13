@@ -179,6 +179,7 @@ function collectFormData() {
   const data = {};
 
   // ---- BEREICH 1 ----
+data.formular_typ = "ErgaenzendeGefaehrdungsbeurteilungBaustelle";
   data.datum               = document.getElementById("datum").value;
   data.email               = document.getElementById("email").value.trim();
   data.nameAV              = document.getElementById("nameAV").value.trim();
