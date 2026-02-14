@@ -19,8 +19,8 @@ function setDateTime() {
 }
 
 setDateTime();
-// Update every minute
-setInterval(setDateTime, 60000);
+// User can now edit the date/time manually
+// Auto-update disabled to allow manual editing
 
 
 // ---- NACHUNTERNEHMER TOGGLE ------------------------------------------------
