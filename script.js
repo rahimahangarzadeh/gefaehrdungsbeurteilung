@@ -9,12 +9,14 @@ function padZ(n) { return String(n).padStart(2, "0"); }
 
 function setDateTime() {
   const now = new Date();
-  const dateStr =
-    padZ(now.getDate()) + "." +
-    padZ(now.getMonth() + 1) + "." +
-    now.getFullYear() + "  " +
-    padZ(now.getHours()) + ":" +
-    padZ(now.getMinutes()) + " Uhr";
+  const year = now.getFullYear();
+  const month = padZ(now.getMonth() + 1);
+  const day = padZ(now.getDate());
+  const hours = padZ(now.getHours());
+  const minutes = padZ(now.getMinutes());
+  
+  // Format: YYYY-MM-DDTHH:MM (for datetime-local input)
+  const dateStr = `${year}-${month}-${day}T${hours}:${minutes}`;
   document.getElementById("datum").value = dateStr;
 }
 
@@ -180,7 +182,18 @@ function collectFormData() {
 
   // ---- BEREICH 1 ----
 data.formular_typ = "ErgaenzendeGefaehrdungsbeurteilungBaustelle";
-  data.datum               = document.getElementById("datum").value;
+  // Convert datetime-local format to German format
+const datumInput = document.getElementById("datum").value;
+if (datumInput) {
+  const dt = new Date(datumInput);
+  data.datum = padZ(dt.getDate()) + "." + 
+               padZ(dt.getMonth() + 1) + "." + 
+               dt.getFullYear() + "  " + 
+               padZ(dt.getHours()) + ":" + 
+               padZ(dt.getMinutes()) + " Uhr";
+} else {
+  data.datum = "";
+}
   data.email               = document.getElementById("email").value.trim();
   data.nameAV              = document.getElementById("nameAV").value.trim();
 
