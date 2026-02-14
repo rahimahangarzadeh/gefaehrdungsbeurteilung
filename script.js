@@ -502,7 +502,7 @@ document.querySelectorAll('.template-btn').forEach(btn => {
     const templateName = btn.getAttribute('data-template');
     const template = templates[templateName];
     if (!template) return;
-    if (!confirm(`Formular mit Vorlage "${btn.textContent}" ausfüllen?\n\nDu kannst danach noch Änderungen vornehmen.`)) return;
+    // Direkt Template anwenden - ohne Bestätigung
     applyTemplate(template);
     btn.style.background = 'var(--accent)'; btn.style.color = '#fff'; btn.style.borderColor = 'var(--accent)';
     setTimeout(() => { btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }, 600);
