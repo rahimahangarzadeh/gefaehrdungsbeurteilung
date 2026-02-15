@@ -713,13 +713,16 @@ body {
 
 /* ---- VORLAGEN BUTTONS ---- */
 .template-buttons {
-  max-width: 1040px;
-  margin: 20px auto 0;
-  padding: 0 24px;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
+  margin-bottom: 28px;
+  padding: 20px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 
 .template-label {
@@ -733,12 +736,12 @@ body {
 }
 
 .template-btn {
-  padding: 8px 18px;
+  padding: 10px 20px;
   background: var(--bg);
   border: 2px solid var(--border-dark);
   border-radius: var(--radius);
   font-family: var(--font-body);
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--text);
   cursor: pointer;
@@ -756,12 +759,27 @@ body {
   transform: translateY(0);
 }
 
+
 @media (max-width: 680px) {
+  .fields-grid {
+    grid-template-columns: 1fr;
+  }
+  .field-group.full-width { grid-column: 1; }
+  .header-inner { height: auto; padding: 14px 16px; flex-wrap: wrap; gap: 12px; }
+  .form-container { padding: 0 12px; margin-top: 20px; }
+  .fields-grid { padding: 16px; gap: 14px; }
+  .page-title { font-size: 2rem; }
+  .page-subtitle { font-size: 0.9rem; }
   .template-buttons {
-    padding: 0 12px;
+    padding: 14px;
+    flex-direction: column;
+    align-items: stretch;
   }
   .template-label {
     width: 100%;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
+  }
+  .template-btn {
+    width: 100%;
   }
 }
