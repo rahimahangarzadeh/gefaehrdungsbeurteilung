@@ -517,3 +517,27 @@ function applyTemplate(t) {
   if (t.sa3_hg_mat) document.querySelector('input[name="sa3_hg_mat"]').value = t.sa3_hg_mat;
   for (let i = 1; i <= 8; i++) { if (t[`gef${i}`]) { const c = document.querySelector(`input[name="gef${i}"]`); if (c) c.checked = true; } if (t[`gef${i}_mass`]) { const inp = document.querySelector(`input[name="gef${i}_mass"]`); if (inp) inp.value = t[`gef${i}_mass`]; } }
 }
+
+// ============================================================
+// AUTO-HIDE HEADER ON SCROLL
+// ============================================================
+let lastScrollTop = 0;
+let scrollThreshold = 100; // Erst nach 100px scrollen reagieren
+const header = document.querySelector('.site-header');
+
+window.addEventListener('scroll', () => {
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  
+  // Nur reagieren wenn genug gescrollt wurde
+  if (Math.abs(scrollTop - lastScrollTop) < 5) return;
+  
+  if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
+    // Runterscrollen - Header verstecken
+    header.classList.add('header-hidden');
+  } else {
+    // Hochscrollen - Header zeigen
+    header.classList.remove('header-hidden');
+  }
+  
+  lastScrollTop = scrollTop;
+});
